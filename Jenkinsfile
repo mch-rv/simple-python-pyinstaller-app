@@ -17,7 +17,7 @@ node {
     docker.image('cdrx/pyinstaller-linux:python2').inside('-p 3200:3200'){
         try {
             stage('Deploy') {
-                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+                junit 'test-reports/results.xml'
             }
         } finally {
             archiveArtifacts 'dist/add2vals'
