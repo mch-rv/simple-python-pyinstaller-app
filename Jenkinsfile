@@ -14,13 +14,4 @@ node {
             junit 'test-reports/results.xml'
         }
     }
-    docker.image('cdrx/pyinstaller-linux:python2').inside('-p 3200:3200'){
-        try {
-            stage('Deploy') {
-                junit 'test-reports/results.xml'
-            }
-        } finally {
-            archiveArtifacts 'dist/add2vals'
-        }
-    }
 }
