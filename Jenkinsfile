@@ -1,4 +1,5 @@
 node {
+    agent none
     stages {
         stage('Build') {
             agent {
