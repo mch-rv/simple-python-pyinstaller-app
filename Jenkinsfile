@@ -15,11 +15,11 @@ node {
         }
     }
     docker.image('cdrx/pyinstaller-linux:python2').inside('-p 5000:5000'){
-        try {
-            stage('Deliver') {
-                sh 'pyinstaller --onefile sources/add2vals.py'
-        }
-        } catch {
+        stage('Deliver') {
+            sh 'pyinstaller --onefile sources/add2vals.py'
+    }
+    post {
+        success {
             archiveArtifacts 'dist/add2vals'
         }
     }
