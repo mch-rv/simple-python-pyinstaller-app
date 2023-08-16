@@ -14,8 +14,8 @@ node {
             junit 'test-reports/results.xml'
         }
     }
-    withEnv(['VOLUME = $(pwd)/sources:/src',
-            'IMAGE = cdrx/pyinstaller-linux:python2']) {
+    withEnv(['VOLUME=$(pwd)/sources:/src',
+            'IMAGE=cdrx/pyinstaller-linux:python2']) {
         stage('Deploy') { 
             try {
                 dir(path: env.BUILD_ID) { 
