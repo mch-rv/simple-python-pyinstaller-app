@@ -13,6 +13,8 @@ node {
         } finally {
             junit 'test-reports/results.xml'
         }
+    }
+    stage('Approval') { 
         input message: 'Lanjutkan ke tahap Deploy? (Klik "Proceed" untuk melanjutkan eksekusi pipeline ke tahap Deploy)'
     }
     withEnv(['VOLUME=$(pwd)/sources:/src',
