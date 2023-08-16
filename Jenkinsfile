@@ -17,7 +17,7 @@ node {
             junit 'test-reports/results.xml'
         }
     }
-     docker.image(${IMAGE}).inside('-p 3100:3100'){
+    docker.image(${IMAGE}).inside('-p 3200:3200'){
         stage('Deploy') { 
             try {
                 dir(path: env.BUILD_ID) { 
