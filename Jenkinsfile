@@ -14,4 +14,15 @@ node {
             junit 'test-reports/results.xml'
         }
     }
+    docker.image('qnib/pytest').inside('-p 3200:3200'){
+        try {
+            stage('Deliver') {
+                timeout(time: 1, unit: 'MINUTES') {
+                    sh 'pyinstaller --onefile sources/add2vals.py'
+                }
+            }
+        } finally {
+            archiveArtifacts 'dist/add2vals'
+        }    
+    }
 }
