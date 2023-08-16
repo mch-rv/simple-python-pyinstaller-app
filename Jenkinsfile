@@ -13,6 +13,7 @@ node {
         } finally {
             junit 'test-reports/results.xml'
         }
+        input message: 'Lanjutkan ke tahap Deploy? (Klik "Proceed" untuk melanjutkan eksekusi pipeline ke tahap Deploy)'
     }
     withEnv(['VOLUME=$(pwd)/sources:/src',
             'IMAGE=cdrx/pyinstaller-linux:python2']) {
