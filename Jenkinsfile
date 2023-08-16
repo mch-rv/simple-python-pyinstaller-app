@@ -1,27 +1,53 @@
-node {
-    docker.image('python:2-alpine').inside('-p 3000:3000'){
+pipeline {
+    agent none
+    options {
+        skipStagesAfterUnstable()
+    }
+    stages {
         stage('Build') {
-
+            agent {
+                docker {
+                    image 'python:3.11.4-alpine3.18'
+                }
+            }
+            steps {
                 sh 'python -m py_compile sources/add2vals.py sources/calc.py'
-        }
-    }
-    docker.image('qnib/pytest').inside('-p 3100:3100'){
-        try {
-            stage('Test') {
-                sh 'py.test --verbose --junit-xml test-reports/results.xml sources/test_calc.py'
+                stash(name: 'compiled-results', includes: 'sources/*.py*')
             }
-        } finally {
-            junit 'test-reports/results.xml'
         }
-    }
-    docker.image('cdrx/pyinstaller-linux:python2').inside('-p 3200:3200'){
-        try {
-            stage('Deploy') {
-                sh 'pyinstaller --onefile sources/add2vals.py'
-                timeout(time: 1, unit: 'MINUTES')
+        stage('Test') {
+            agent {
+                docker {
+                    image 'qnib/pytest'
+                }
             }
-        } finally {
-            archiveArtifacts 'dist/add2vals'
-        }    
+            steps {
+                sh 'py.test --junit-xml test-reports/results.xml sources/test_calc.py'
+            }
+            post {
+                always {
+                    junit 'test-reports/results.xml'
+                }
+            }
+        }
+        stage('Deliver') { 
+            agent any
+            environment { 
+                VOLUME = '$(pwd)/sources:/src'
+                IMAGE = 'cdrx/pyinstaller-linux:python2'
+            }
+            steps {
+                dir(path: env.BUILD_ID) { 
+                    unstash(name: 'compiled-results') 
+                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F add2vals.py'" 
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts "${env.BUILD_ID}/sources/dist/add2vals" 
+                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+                }
+            }
+        }
     }
 }
