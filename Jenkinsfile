@@ -16,7 +16,7 @@ node {
     }
     docker.image('qnib/pytest').inside('-p 3200:3200'){
         try {
-            stage('Deliver') {
+            stage('Deploy') {
                 timeout(time: 1, unit: 'MINUTES') {
                     sh 'pyinstaller --onefile sources/add2vals.py'
                 }
