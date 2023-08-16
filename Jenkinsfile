@@ -14,7 +14,7 @@ node {
             junit 'test-reports/results.xml'
         }
     }
-    docker.image('qnib/pytest').inside('-p 3200:3200'){
+    docker.image('cdrx/pyinstaller-linux:python2').inside('-p 3200:3200'){
         try {
             stage('Deploy') {
                 timeout(time: 1, unit: 'MINUTES') {
